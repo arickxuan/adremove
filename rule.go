@@ -1,10 +1,13 @@
 package main
 
 import (
-	"log"
 	"net/url"
 	"regexp"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
+
+	"github.com/lqqyt2423/go-mitmproxy/proxy"
 )
 
 type RuleItemData struct {
@@ -98,18 +101,32 @@ func CheckRule(f *url.URL, rules []Rule) (bool, string) {
 
 }
 
-func extractContent(s string) string {
-	start := strings.Index(s, "(")   // 找到第一个 (
-	end := strings.LastIndex(s, ")") // 找到最后一个 )
+func AdResponse(action string) *proxy.Response {
+	resp := &proxy.Response{}
 
-	if start == -1 || end == -1 || start >= end {
-		return "" // 如果找不到或者位置不正确，则返回空字符串
+	if action == "reject" { // 直接断开连接
+		resp.StatusCode = 502
+		resp.Header.Set("Content-Type", "text/plain")
+	} else if action == "reject-200" { // 返回一个code为200，body内容为空的response
+		resp.StatusCode = 200
+		resp.Header.Set("Content-Type", "text/plain")
+		resp.Body = []byte("")
+	} else if action == "reject_img" { //返回一个code为200，body内容一像素图片的的response
+		resp.StatusCode = 200
+		resp.Header.Set("Content-Type", "image/png")
+		resp.Body = []byte("\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDAT\x08\xd7c\xf8\xff\xff?\x00\x05\xfe\x02\xfe\xdc\xcc\x11\x00\x00\x00\x00IEND\xaeB`\x82")
+	} else if action == "reject_dict" { //返回一个code为200，body内容为"{}"的空json对象字符串
+		resp.StatusCode = 200
+		resp.Header.Set("Content-Type", "application/json")
+		resp.Body = []byte("{}")
+	} else if action == "reject_array" { //返回一个code为200，body内容为"[]"的空json数组字符串
+		resp.StatusCode = 200
+		resp.Header.Set("Content-Type", "application/json")
+		resp.Body = []byte("[]")
+	} else if action == "reject_str" { //返回一个code为200，body内容为"reject_str"的字符串
+		resp.StatusCode = 200
+		resp.Body = []byte("reject_str")
 	}
-	return s[start+1 : end] // 提取括号中的内容
-}
 
-func trimBlank(str string) string {
-	regex := regexp.MustCompile(`\s+`)
-	noSpaceStr := regex.ReplaceAllString(str, "")
-	return noSpaceStr
+	return resp
 }

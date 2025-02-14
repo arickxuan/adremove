@@ -14,10 +14,14 @@ func TestConfig(t *testing.T) {
 	if err != nil {
 		t.Log(err)
 	}
-	t.Log(c)
+	//t.Log(c)
 	t.Log("ok")
-	for _, v := range c.Rewrites {
-		t.Log(v.Pattern, v.Action, v.Params)
+	for _, v := range c.Plugins {
+		t.Log(v.Enabled, v.URL)
+	}
+
+	for _, v := range c.Rules {
+		t.Log(v.Type, v.Action, v.Params)
 	}
 }
 

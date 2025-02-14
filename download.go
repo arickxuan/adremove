@@ -1,12 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func getFileName(url string) string {
@@ -23,7 +24,7 @@ func getFileName(url string) string {
 
 func downLoad(url string, fileName string) {
 	// 设置自定义的 User-Agent
-	userAgent := "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Mobile/15E148 Safari/604.1"
+	userAgent := "Loon/821 CFNetwork/1399 Darwin/22.1.0"
 
 	// 创建一个 HTTP 客户端
 	client := &http.Client{}
@@ -31,7 +32,7 @@ func downLoad(url string, fileName string) {
 	// 创建一个 GET 请求
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Println("Error creating request:", err)
+		log.Println("Error creating request:", err)
 		return
 	}
 
@@ -41,7 +42,7 @@ func downLoad(url string, fileName string) {
 	// 发送请求
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error sending request:", err)
+		log.Println("Error sending request:", err)
 		return
 	}
 	defer resp.Body.Close()
@@ -49,7 +50,7 @@ func downLoad(url string, fileName string) {
 	// 创建一个文件来保存下载的内容
 	file, err := os.Create(fileName)
 	if err != nil {
-		fmt.Println("Error creating file:", err)
+		log.Println("Error creating file:", err)
 		return
 	}
 	defer file.Close()
@@ -57,9 +58,9 @@ func downLoad(url string, fileName string) {
 	// 将响应的内容写入文件
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
-		fmt.Println("Error writing to file:", err)
+		log.Println("Error writing to file:", err)
 		return
 	}
 
-	fmt.Println("File downloaded successfully.")
+	log.Println("File downloaded successfully.")
 }

@@ -5,6 +5,8 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type General struct {
@@ -54,6 +56,7 @@ type Config struct {
 func (c *Config) HandlePlugin() {
 	for _, p := range c.Plugins {
 		file := getFileName(p.URL)
+		log.Println(file)
 		downLoad(p.URL, file)
 		ParseConfigFile(file, c)
 	}
@@ -110,8 +113,8 @@ func ParseConfigFile(filename string, config *Config) (*Config, error) {
 		config = &Config{}
 	}
 	var currentSection string
-	pluginRegex := regexp.MustCompile(`^(https?://\S+),\s*enabled=(true|false)$`)
-	ruleRegex := regexp.MustCompile(`^([^,]+),\s*((?:[^,]+,)*[^,]+),\s*([^,]+)$`)
+	pluginRegex := regexp.MustCompile(`^(https?://\S+)\s*,\s*enabled\s*=\s*(true|false)\s*$`)
+	ruleRegex := regexp.MustCompile(`^([^,]+)\s*,\s*((?:[^,]+,)*[^,]+)\s*,\s*([^,]+)$`)
 	//rewriteRegex := regexp.MustCompile(`^(\S+)(?:\s+(\S+))+$`)
 	mitmRegex := regexp.MustCompile(`^hostname\s*=\s*(.+)$`)
 
@@ -128,9 +131,29 @@ func ParseConfigFile(filename string, config *Config) (*Config, error) {
 		}
 
 		switch currentSection {
+		case "general":
+			parts := strings.Split(line, "=")
+			if len(parts) == 2 {
+				key := strings.TrimSpace(parts[0])
+				value := strings.TrimSpace(parts[1])
+				switch key {
+				case "addr":
+					config.Addr = value
+				case "ca_root_path":
+					config.CaRootPath = value
+				case "enable_custom_ca":
+					config.EnableCustomCa = value == "true"
+				case "ssl_insecure":
+					config.SslInsecure = value == "true"
+				}
+			}
+
 		case "plugin":
 			if matches := pluginRegex.FindStringSubmatch(line); matches != nil {
-				enabled := matches[2] == "true"
+				log.Println("matches", matches)
+				enabled := trimBlank(matches[2]) == "true"
+				log.Println("matches2", trimBlank(matches[2]))
+				log.Println("matches1", trimBlank(matches[1]))
 				if enabled {
 					config.Plugins = append(config.Plugins, Plugin{URL: matches[1], Enabled: enabled})
 				}
@@ -148,7 +171,7 @@ func ParseConfigFile(filename string, config *Config) (*Config, error) {
 			// }
 			parts := strings.Split(line, " ")
 			if len(parts) >= 2 {
-				config.Rewrites = append(config.Rewrites, Rewrite{Pattern: parts[0], Action: parts[1], Params: parts[2:]})
+				config.Rewrites = append(config.Rewrites, Rewrite{Pattern: parts[0], Action: strings.ToLower(parts[1]), Params: parts[2:]})
 			}
 
 		case "mitm":

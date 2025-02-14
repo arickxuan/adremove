@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"regexp"
 
 	"github.com/itchyny/gojq"
