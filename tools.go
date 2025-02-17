@@ -2,7 +2,6 @@ package main
 
 import (
 	"crypto/rsa"
-	"crypto/x509/pkix"
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
@@ -130,60 +129,6 @@ func pemToP12() {
 	}
 
 	fmt.Println("成功将证书转换为 P12 格式")
-}
-
-// 计算 OpenSSL 风格的 subject_hash_old
-func calculateSubjectHashOld(subject pkix.Name) uint32 {
-	// OpenSSL 的旧版本哈希算法
-	var result uint32
-	if len(subject.CommonName) > 0 {
-		result = rotateLeft(result, 1) + uint32(subject.CommonName[0])
-	}
-	for _, org := range subject.Organization {
-		if len(org) > 0 {
-			result = rotateLeft(result, 1) + uint32(org[0])
-		}
-	}
-	for _, country := range subject.Country {
-		if len(country) > 0 {
-			result = rotateLeft(result, 1) + uint32(country[0])
-		}
-	}
-	return result
-}
-
-func rotateLeft(value uint32, bits uint) uint32 {
-	return (value << bits) | (value >> (32 - bits))
-}
-
-func hashCa() {
-	// 读取证书文件
-	certPEMData, err := os.ReadFile("mitmproxy-ca-cert.pem")
-	if err != nil {
-		fmt.Printf("读取证书文件失败: %v\n", err)
-		return
-	}
-
-	// 解析 PEM 格式
-	block, _ := pem.Decode(certPEMData)
-	if block == nil {
-		fmt.Println("解析 PEM 格式失败")
-		return
-	}
-
-	// 解析证书
-	cert, err := x509.ParseCertificate(block.Bytes)
-	if err != nil {
-		fmt.Printf("解析证书失败: %v\n", err)
-		return
-	}
-
-	// 计算 subject_hash_old
-	hashValue := calculateSubjectHashOld(cert.Subject)
-	fmt.Printf("%08x\n", hashValue)
-	re := fmt.Sprintf("%08x\n", hashValue)
-	log.Println("re:", re, hashValue)
-
 }
 
 // android 可用
