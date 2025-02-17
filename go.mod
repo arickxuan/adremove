@@ -8,6 +8,8 @@ require (
 	github.com/lqqyt2423/go-mitmproxy v1.8.5
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tidwall/sjson v1.2.5
+	github.com/tjfoc/gmsm v1.4.1
+	software.sslmate.com/src/go-pkcs12 v0.5.0
 )
 
 require (
@@ -20,6 +22,7 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
+	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
 	golang.org/x/text v0.14.0 // indirect

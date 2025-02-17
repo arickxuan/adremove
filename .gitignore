@@ -1,0 +1,16 @@
+.idea/
+.air.toml
+.DS_Store
+.gitkeep
+.vscode/
+
+vendor/
+bin/
+tmp/
+logs/
+config/local/
+
+mitmproxy-ca.pem
+mitmproxy-ca-cert.pem
+mitmproxy-ca-cert.cer
+mitmproxy-ca.p12

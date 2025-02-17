@@ -73,5 +73,7 @@ wget https://github.com/arickxuan/adremove/raw/refs/heads/main/adremove
 ```
 ./adremove rule.conf
 ```
-1. 使用其他软件全局模式调用本端口 或在设置中 设置代理
-2. 完成
+5. 启动后目录下会生成 mitmproxy 开头的三个文件证书文件
+6. 安装证书 mitmproxy-ca-cert.pem (推荐使用 MoveCertificate)[https://github.com/ys1231/MoveCertificate]
+7. 在WLAN的设置中 设置代理(使用其他软件全局模式调用本软件端口可能有问题)
+8. 完成,开始使用
