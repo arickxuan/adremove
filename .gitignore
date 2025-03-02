@@ -10,6 +10,8 @@ tmp/
 logs/
 config/local/
 
+build/
+
 mitmproxy-ca.pem
 mitmproxy-ca-cert.pem
 mitmproxy-ca-cert.cer

@@ -1,9 +1,10 @@
-package main
+package adcore
 
 import (
 	"encoding/json"
-	log "github.com/sirupsen/logrus"
 	"regexp"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/itchyny/gojq"
 	"github.com/tidwall/sjson"
@@ -32,7 +33,7 @@ func handleJson(jsonData string, action string, params []string) string {
 		jsonData = checkJsonReplace(jsonData, params)
 	} else if action == "response-body-json-jp" {
 		jsonData = checkJsonJq(jsonData, params)
-	}else if action == "request-body-json-add" {
+	} else if action == "request-body-json-add" {
 		jsonData = checkJsonDel(jsonData, params)
 	} else if action == "request-body-json-del" {
 		jsonData = checkJsonDel(jsonData, params)

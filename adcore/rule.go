@@ -1,4 +1,4 @@
-package main
+package adcore
 
 import (
 	"net/url"

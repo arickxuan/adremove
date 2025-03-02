@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 
+	"adremove/adcore"
+
 	"github.com/lqqyt2423/go-mitmproxy/proxy"
 	log "github.com/sirupsen/logrus"
 )
@@ -30,45 +32,6 @@ func main() {
 	args := os.Args
 	// 打印所有参数
 	log.Println("所有参数：", args)
-	var config *Config
 
-	if args[1] != "" {
-		c, err := ParseConfigFile(args[1], nil)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
-		c.HandlePlugin()
-		log.Println("所有配置：", c)
-		config = c
-
-	} else {
-		config = &Config{}
-		config.Addr = ":9080"
-		config.SslInsecure = false
-	}
-
-	opts := &proxy.Options{
-		Addr:              config.Addr,
-		StreamLargeBodies: 1024 * 1024 * 5,
-		SslInsecure:       config.SslInsecure,
-	}
-	if config.CaRootPath != "" {
-		opts.CaRootPath = config.CaRootPath
-	}
-	if config.EnableCustomCa {
-		opts.NewCaFunc = NewTrustedCA
-	}
-
-	p, err := proxy.NewProxy(opts)
-	if err != nil {
-		log.Fatal(err)
-	}
-	add := &CloseConn{
-		config: config,
-	}
-	p.AddAddon(add)
-	p.AddAddon(&proxy.LogAddon{})
-
-	log.Fatal(p.Start())
+	adcore.NewAdService(args[1])
 }

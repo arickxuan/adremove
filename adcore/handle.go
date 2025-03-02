@@ -1,4 +1,4 @@
-package main
+package adcore
 
 import "github.com/lqqyt2423/go-mitmproxy/proxy"
 
@@ -35,8 +35,6 @@ func (a *CloseConn) Request(f *proxy.Flow) {
 func (a *CloseConn) Responseheaders(f *proxy.Flow) {
 
 }
-
-
 
 // 完整的HTTP响应已被读取。
 func (a *CloseConn) Response(f *proxy.Flow) {
